@@ -8,9 +8,9 @@ INFO 201 | BA Section | Shiva Rithwick Anem
 
 ### Here is the dataset that we are going to use:
 
-Fast food restaurant distribution in US, provided by _Datafiniti_, which provides instant access to web data. Datafiniti compile data from thousands of websites to create standardized databases of business, product, and property information
-Health data in the United States (focusing on obesity data), provided by the United States Department of Agriculture Economic Research Service. 
-Our project is going to examine the relationship between the distribution of fast food restaurants in the US and obesity rates in US (by state)
+- Fast food restaurant distribution in US, provided by _Datafiniti_, which provides instant access to web data. Datafiniti compile data from thousands of websites to create standardized databases of business, product, and property information
+- Health data in the United States (focusing on obesity data), provided by the United States Department of Agriculture Economic Research Service. 
+- Our project is going to examine the relationship between the distribution of fast food restaurants in the US and obesity rates in US (by state)
 
 ### The target audience for the project would be:
 
