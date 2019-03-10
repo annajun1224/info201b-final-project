@@ -1,7 +1,9 @@
+source("shared.R")
 # server.R
-library(dplyr)
-library(ggplot2) # for getting midwest dataset
-library(readtext) # for getting midwest dataset
+install_if_needed("dplyr")
+install_if_needed("ggplot2") # for getting midwest dataset
+install_if_needed("readtext") # for getting midwest dataset
+
 # Read in data
 # source('./scripts/build_map.R')
 # source('./scripts/build_chart.R')

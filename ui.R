@@ -1,6 +1,7 @@
+source("shared.R")
 # ui.R
-library(shiny)
-library(plotly)
+install_if_needed("shiny")
+install_if_needed("plotly")
 
 introductionTabPanel <- tabPanel(
   "Home",
