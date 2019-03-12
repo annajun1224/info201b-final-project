@@ -126,7 +126,7 @@ shinyUI(
 #         plotlyOutput("scatter")
 #       )
 #     )
-#   )???
+#   )
 #     tabPanel("Analysis",
 #          sidebarLayout(
 #            sidebarPanel(
