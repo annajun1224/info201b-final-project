@@ -2,6 +2,21 @@
 library(shiny)
 library(plotly)
 
+
+# County <- selectInput(
+#   "CountyChoice",
+#   label = "County",
+#   choices = county,
+#   selected = "county"
+# )
+# 
+# FastFood <- selectInput(
+#   "FastFood",
+#   label = "Fast food restaurants",
+#   choices = Name,
+#   selected = "Name"
+# )
+
 introductionTabPanel <- tabPanel(
   "Home",
   htmlOutput("homepage", container = div)
@@ -111,5 +126,21 @@ shinyUI(
 #         plotlyOutput("scatter")
 #       )
 #     )
-#   )
+#   )???
+#     tabPanel("Analysis",
+#          sidebarLayout(
+#            sidebarPanel(
+#              County,
+#              FastFood,
+#              checkboxInput("smooth", label = strong("Show Trendline"), value = TRUE)
+#            ),
+#            mainPanel(
+#              h1("Number of Fast Food Restaurants in each County"),
+#              plotOutput("FastFood_plot"))
+#          )
+# )
+# 
+
+
+
 ))

@@ -44,6 +44,10 @@ shinyServer(function(input, output, session) {
     output$homepage <- renderUI({
         HTML(markdown::markdownToHTML(file = "README.md"))
     })
+    
+    # output$FastFood_plot <- renderPlot({
+    #   p <- ggplot(data = data, mapping = aes_string(x = input$County, y = input$FastFood)) +
+    #     geom_point()
 
     # Render a plotly object that returns your map
     # output$map <- renderPlotly({ 
