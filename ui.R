@@ -22,6 +22,27 @@ introductionTabPanel <- tabPanel(
   htmlOutput("homepage", container = div)
 )
 
+barChartPanel <- tabPanel(
+  "Graphs",
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("stateChoice",
+                  label = "State Selection",
+                  choices = stateSelection,
+                  selected = ""),
+      selectInput("countyChoice",
+        label = "County Selection",
+                  choices = "",
+                  selected = ""))
+        
+      ),
+
+    mainPanel(plotOutput("plot"))
+  )
+
+  
+
+
 # populationMapTabPanel <- tabPanel(
 #     "Home",
 #     titlePanel("Population by Midwest States"),
@@ -102,7 +123,8 @@ shinyUI(
   "Fast Food Restaurants in the U.S.",
   theme = "style.css",
   # Create a tab panel for your map
-  introductionTabPanel
+  introductionTabPanel,
+  barChartPanel
   # stateCountyDemographicsTabPanel
 
   # Create a tabPanel to show your scatter plot

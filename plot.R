@@ -18,3 +18,23 @@ countyObese_plot <- function(data){
          title = "Obesity rate over County") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 }
+
+restaurantSelections <- countyObese %>%
+  select(name) %>%
+  unique()
+
+stateSelection <- countyObese %>%
+  select(State) %>%
+  unique()
+
+dataSelection <- countyObese %>%
+  select(State, County, pct_white:pct_other) %>%
+  unique()
+
+
+restaurantByState <- countyObese %>%
+  select(State, name) %>%
+  filter
+
+
+

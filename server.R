@@ -45,6 +45,13 @@ shinyServer(function(input, output, session) {
         HTML(markdown::markdownToHTML(file = "README.md"))
     })
     
+    observe({
+    stateChoose <- input$stateChoice
+    filtered_state <- dataSelection %>%
+      filter(State == stateChoose) %>%
+      select(County)
+    updateSelectInput(session, "countyChoice", label = "County Selection", choices = filtered_state,
+                      selected = "")})
 
     # Render a plotly object that returns your map
     # output$map <- renderPlotly({ 
