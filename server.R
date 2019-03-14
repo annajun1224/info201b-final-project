@@ -5,7 +5,9 @@ library(httr)
 library(jsonlite)
 library(leaflet)
 library(RColorBrewer)
-
+library(reshape2)
+library(DT)
+library(lubridate)
 ##########################Code for generating the joint data ##########################
 
 joined_data <- read.csv("data/joined_data.csv", stringsAsFactors = F)
@@ -13,7 +15,8 @@ joined_data <- joined_data %>%
   mutate(full_address = paste(address, city, County, State)) %>%
   group_by(name) %>%
   mutate(count = n()) %>%
-  arrange(-count)
+  arrange(-count) %>%
+  ungroup()
 
 restaurant_chain_list <- joined_data %>%
   group_by(name) %>% 
@@ -31,19 +34,18 @@ top_five_count <- 0
 for (i in 2:6) {
   top_five_count <- top_five_count + joined_data %>% filter(name == restaurant_choices[i]) %>% nrow()
 }
-#code for data filtering
-countyObese <- read.csv("data/joined_data.csv", stringsAsFactors = F)
 
-restaurantSelections <- countyObese %>%
+restaurantSelections <- joined_data %>%
   select(name) %>%
   unique()
 
-stateSelection <- countyObese %>%
+stateSelection <- joined_data %>%
+  select(State, name) %>%
   select(State) %>%
   unique()
 
 
-restaurantByState <- countyObese %>%
+restaurantByState <- joined_data %>%
   select(State, name) %>%
   filter
 
@@ -138,20 +140,26 @@ shinyServer(function(input, output, session) {
       leafletProxy("map") %>% clearMarkers()
     }
   })
+  
+  
+  observe({
+    updateSelectInput(session, 
+                      "stateChoice",
+                      choices = stateSelection)
+  })
+  
   observe({
     stateChoose <- input$stateChoice
-    filtered_state <- countyObese %>%
+    filtered_state <- joined_data %>%
       filter(State == stateChoose) %>%
       select(County)
     updateSelectInput(session, 
-                      "countyChoice", 
-                      label = "County Selection", 
-                      choices = filtered_state,
-                      selected = "")
+                      "countyChoice",
+                      choices = filtered_state)
   })
   
   output$distribPie <- renderPlotly({
-    distribData <- countyObese %>%
+    distribData <- joined_data %>%
       select(State, County, name) %>%
       filter(State == input$stateChoice) %>%
       count(name) %>%
@@ -180,7 +188,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$data <- renderText({
-    used <- countyObese %>%
+    used <- joined_data %>%
       filter(State == input$stateChoice, County == input$countyChoice) %>%
       select(pct_obese_14, pct_diabetes_14, poverty_rate) %>%
       unique()
@@ -190,7 +198,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$racePie <- renderPlotly({
-    race <- countyObese %>%
+    race <- joined_data %>%
       filter(State == input$stateChoice, County == input$countyChoice) %>%
       select(County, pct_white:pct_other) %>%
       unique()
@@ -209,5 +217,27 @@ shinyServer(function(input, output, session) {
                     showlegend = F) %>%
       layout(title = 'Race Distribution by County')
     plot
+  })
+  
+  output$CountyInfo <- renderDataTable({
+    county_impacted <- joined_data %>%
+      group_by(County) %>%
+      filter(pct_obese_14 == max(pct_obese_14)) %>%
+      arrange(- pct_obese_14) %>%
+      head(100) %>%
+      select(State, County, pct_obese_14)
+    datatable(county_impacted, options = list(pageLength = 10, scrollX = TRUE, scrollY = '450px')) %>% formatStyle(names(county_impacted))
+  })
+  output$Health_plot <- renderPlot({
+    p <- ggplot(data = joined_data, mapping = aes_string(x = input$countyChoice, y = input$pct_obese_14)) +
+      geom_point()
+  })
+  
+  output$QA <- renderUI({
+    HTML(markdown::markdownToHTML(file = "README1.md"))
+  })
+  
+  output$ContactInformation <- renderUI({
+    HTML(markdown::markdownToHTML(file = "contactinfo.md"))
   })
 })

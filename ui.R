@@ -2,8 +2,8 @@
 library(shiny)
 library(plotly)
 library(leaflet)
-source("server.r")
-
+library(DT)
+library(lubridate)
 introductionTabPanel <- tabPanel(
   "Home",
   htmlOutput("homepage", container = div)
@@ -34,30 +34,62 @@ mapTabPanel <- tabPanel(
 )
 
 barChartPanel <- tabPanel(
-  "Graphs",
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("stateChoice",
-                  label = "State Selection",
-                  choices = stateSelection,
-                  selected = "NY"),
-      selectInput("countyChoice",
-                  label = "County Selection",
-                  choices = "",
-                  selected = "Bronx")),
-    mainPanel(htmlOutput("feedback", 
-                         align = "center"), 
-              htmlOutput("data", 
-                         align = "center"), 
-              fluidRow(
-                splitLayout(cellWidths = c("50%", "50%"), 
-                            plotlyOutput("distribPie", height = 550),
-                            plotlyOutput("racePie", height = 550)
-                )
-              )
+  "Ethnicity vs. Obesity & Diabetes",
+  div(
+    tags$head(
+      # Include our custom CSS
+      includeCSS("ethnicity.css")
+    ),
+    fluidRow(
+      div(class="ethnicity_input",
+          selectInput("stateChoice",
+                      label = "Choose a State",
+                      choices = "")),
+      div(class="ethnicity_input",
+        selectInput("countyChoice",
+                    label = "Choose a County",
+                    choices = ""))
+    ),
+    div(class="summary",
+      htmlOutput("feedback", 
+                 align = "center"), 
+      htmlOutput("data", 
+                 align = "center")), 
+    div(class="pie-container",
+      fluidRow(
+        splitLayout(cellWidths = c("50%", "50%"), 
+                    plotlyOutput("distribPie", height = 550),
+                    plotlyOutput("racePie", height = 550)
+        )
+      )
     )
-    
   )
+)
+
+tablePanel <- tabPanel("County Obesity Rate Rank",
+                       verticalLayout(
+                         #plotOutput("crime_type_plot"),
+                         #fluidRow(
+                         # textOutput("summaryText"),
+                         #   br(),
+                         p("We found out that population's health does effected by
+               fast food restaurant. Here we build a table to show top 
+               100 counties which has high obesity rate"),
+                         #),
+                         hr(),
+                         dataTableOutput("CountyInfo")
+                       )
+)
+
+
+QATabPanel <- tabPanel(
+  "Q&A",
+  htmlOutput("QA", container = div)
+)
+
+ContactInfo <- tabPanel(
+  "ContactInformation",
+  htmlOutput("ContactInformation", container = div)
 )
 
 shinyUI(
@@ -68,5 +100,8 @@ shinyUI(
   # Create a tab panel for your map
   introductionTabPanel,
   mapTabPanel,
-  barChartPanel
+  barChartPanel,
+  tablePanel,
+  QATabPanel,
+  ContactInfo
 ))
