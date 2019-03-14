@@ -4,6 +4,8 @@ library("tidyr")
 library("ggmap")
 library("leaflet")
 library("ggplot2")
+library("reshape2")
+
 
 countyObese <- read.csv("data/joined_data.csv", stringsAsFactors = F)
 
@@ -27,14 +29,8 @@ stateSelection <- countyObese %>%
   select(State) %>%
   unique()
 
-dataSelection <- countyObese %>%
-  select(State, County, pct_white:pct_other) %>%
-  unique()
-
 
 restaurantByState <- countyObese %>%
   select(State, name) %>%
   filter
-
-
 
