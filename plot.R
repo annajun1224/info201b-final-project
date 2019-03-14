@@ -21,9 +21,4 @@ countyObese_plot <- function(data){
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 }
 
-
-filtersd <- countyObese %>%
-  filter(State == "AK", County == "Anchorage") %>%
-  select(County, pct_obese_09, pct_diabetes_09, pct_obese_14, pct_diabetes_14) %>%
-  unique()
   

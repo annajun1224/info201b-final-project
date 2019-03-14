@@ -69,9 +69,9 @@ tablePanel <- tabPanel("Overall Data Comparison Table",
                          #fluidRow(
                          # textOutput("summaryText"),
                          #   br(),
-                         p("It can be observed that poverty rates do not seem to affect obesity 
-                           rates and that the increase in restaurant count does 
-                           correspond with an increase in obesity"),
+                         p("This is a comparison chart that places data from the previous graphic tab into a 
+                           table for comparison. It includes poverty rates, restaurant count change, and 
+                           obesity rates for 2009 and 2014"),
                          #),
                          hr(),
                          dataTableOutput("CountyInfo")
