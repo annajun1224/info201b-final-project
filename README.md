@@ -2,6 +2,8 @@
 
 Glad to see you here! On this page, we will guide you through our website.
 
+https://annajun1224.shinyapps.io/FinalProject/
+
 - Under "Fast Food Map", you would be able to view the fast food distribution across the United States.
 - Under "Analysis", you would be able to look at the relationship between fast food distribution and the obesity rate in each state.
 - Also, you would be able to look at the ethnic group distribution in each state and which ethnic group has favor towards fast food.
