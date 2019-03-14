@@ -21,16 +21,5 @@ countyObese_plot <- function(data){
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
 }
 
-restaurantSelections <- countyObese %>%
-  select(name) %>%
-  unique()
 
-stateSelection <- countyObese %>%
-  select(State) %>%
-  unique()
-
-
-restaurantByState <- countyObese %>%
-  select(State, name) %>%
-  filter
 

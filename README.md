@@ -1,15 +1,18 @@
 ## Welcome
 
-Glad to see you here. On this page, we will guide you through our website.
+Glad to see you here！On this page, we will guide you through our website.
 
-- Under "Map" section, you would be able to view the fast food distribution across the United States.
-- Under "Analysis", you would be able to look at the relationship between fast food distribution and the obesity rate in each state.
+- Under “Fast Food Map”, you would be able to view the fast food distribution across the United States.
+- Under “Analysis”, you would be able to look at the relationship between fast food distribution and the obesity rate in each state.
 - Also, you would be able to look at the ethnic group distribution in each state and which ethnic group has favor towards fast food.
 
 ## About our Dataset
 
 - **Fast food restaurant distribution** in the US, provided by Datafiniti, which provides instant access to web data. Datafiniti compiles data from thousands of websites to create standardized databases of business, product, and property information
-- **Health data** in the United States (focusing on obesity data), provided by the United States Department of Agriculture Economic Research Service. 
+- **Health data** in the United States (focusing on obesity data), provided by the United States Department of Agriculture Economic Research Service.
+
+## Project Purpose
+
 Our project is going to examine the relationship between the distribution of fast food restaurants in the US and obesity rates in the US (by state)
 
 ## Target Audience
@@ -36,7 +39,7 @@ The data is in the form of the static `csv` and that would be easily read and co
 
 ### Library used:
 
-We would be using various libraries for this application, `shiny`, `dplyr`, `ggplot2`, `data`, `table`, `tidyr`, etc.
+We would be using various libraries for this application, `shiny`, `dplyr`, `ggplot2`, `leaflet`, `plotly`, `tidyr`, etc.
 
 ## Disclaimer
 

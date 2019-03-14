@@ -1,25 +1,36 @@
 # ui.R
 library(shiny)
 library(plotly)
-source("plot.R")
-
-# County <- selectInput(
-#   "CountyChoice",
-#   label = "County",
-#   choices = county,
-#   selected = "county"
-# )
-# 
-# FastFood <- selectInput(
-#   "FastFood",
-#   label = "Fast food restaurants",
-#   choices = Name,
-#   selected = "Name"
-# )
+library(leaflet)
+source("server.r")
 
 introductionTabPanel <- tabPanel(
   "Home",
   htmlOutput("homepage", container = div)
+)
+
+mapTabPanel <- tabPanel(
+  "Restaurant Map",
+  div(class="outer",
+    tags$head(
+      # Include our custom CSS
+      includeCSS("map.css")
+    ),
+    
+    # If not using custom CSS, set height of leafletOutput to a number instead of percent
+    leafletOutput("map", width="100%", height="100%"),
+    absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+                  draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
+                  width = 330, height = "auto",
+                  h3("Fast Food Restaurants"),
+                  selectInput("restaurant_chain", "Fast Food Chain", choices=""),
+                  # dataTableOutput("top_restaurant_list")
+                  tags$label("Top 5 Fast Food Chains", class="control-label"),
+                  tableOutput("top_restaurant_list"),
+                  textInput("address_filter", label = tags$label("Addresses", class="control-label"), placeholder = "Enter address...", value = ""),
+                  tableOutput("addresses")
+    )
+  )
 )
 
 barChartPanel <- tabPanel(
@@ -42,19 +53,20 @@ barChartPanel <- tabPanel(
                 splitLayout(cellWidths = c("50%", "50%"), 
                             plotlyOutput("distribPie", height = 550),
                             plotlyOutput("racePie", height = 550)
-                           )
-             )
+                )
+              )
     )
-
+    
   )
 )
 
 shinyUI(
   navbarPage(
   "Fast Food Restaurants in the U.S.",
-  theme = "style.css",
+  # Reads the global theme css from the www folder
+  theme = "global.css",
   # Create a tab panel for your map
   introductionTabPanel,
+  mapTabPanel,
   barChartPanel
-  )
-)
+))

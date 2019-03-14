@@ -1,16 +1,144 @@
-
+# server.R
 library(dplyr)
-library(ggplot2)
-library(plotly)
+library(ggplot2) # for getting midwest dataset
+library(httr)
+library(jsonlite)
+library(leaflet)
+library(RColorBrewer)
 
-shinyServer(function(input, output, session) { 
+##########################Code for generating the joint data ##########################
+
+joined_data <- read.csv("data/joined_data.csv", stringsAsFactors = F)
+joined_data <- joined_data %>%
+  mutate(full_address = paste(address, city, County, State)) %>%
+  group_by(name) %>%
+  mutate(count = n()) %>%
+  arrange(-count)
+
+restaurant_chain_list <- joined_data %>%
+  group_by(name) %>% 
+  summarize(count=n()) %>%
+  arrange(-count, name)
+
+restaurant_choices <- c("All", restaurant_chain_list %>%
+                      select(name) %>%
+                      .[[1]])
+
+restaurant_location_data <- joined_data %>% select(longitude, latitude, postalCode, name, address, city, County, State) %>%
+  mutate(full_address = paste(address, city, County, State, postalCode, sep=", "))
+
+top_five_count <- 0
+for (i in 2:6) {
+  top_five_count <- top_five_count + joined_data %>% filter(name == restaurant_choices[i]) %>% nrow()
+}
+#code for data filtering
+countyObese <- read.csv("data/joined_data.csv", stringsAsFactors = F)
+
+restaurantSelections <- countyObese %>%
+  select(name) %>%
+  unique()
+
+stateSelection <- countyObese %>%
+  select(State) %>%
+  unique()
 
 
-    output$homepage <- renderUI({
-        HTML(markdown::markdownToHTML(file = "README.md"))
-    })
+restaurantByState <- countyObese %>%
+  select(State, name) %>%
+  filter
+
+# Start shinyServer
+shinyServer(function(input, output, session) {
+
+  observe({
+    selected_chain <- input$restaurant_chain
+    if (selected_chain == "") {
+      selected_chain = "All"
+    }
     
-    observe({
+    selected_data <- joined_data
+    
+    if (selected_chain != "All") {
+      selected_data <- selected_data %>% filter(name == selected_chain)  
+    }
+
+    colorData <- selected_data$name
+    pal <- colorFactor(if_else(selected_chain != "All", "#33007b", "viridis"), colorData, ordered = F, na.color = 'Purple')
+
+    leafletProxy("map", data = selected_data) %>%
+      clearShapes() %>%
+      addCircles(~longitude, ~latitude, radius=30000, layerId=~postalCode,
+                 stroke=FALSE, fillOpacity=0.4, fillColor=pal(colorData), label=~paste(name, full_address, sep=", ")) %>%
+      addLegend("bottomleft", pal=pal, values=head(colorData, top_five_count), title="Restaurant Chain (top 5 unordered)",
+                layerId="colorLegend")
+  })
+
+  observe({
+    updateSelectInput(
+    session,
+    "restaurant_chain",
+    choices = restaurant_choices
+    )
+  })
+
+  output$map <- renderLeaflet({
+    colorData <- joined_data$name
+    pal <- colorFactor("viridis", colorData, ordered = F)
+    leaflet(data = joined_data) %>%
+      addTiles(
+        urlTemplate = "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
+        attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
+      ) %>%
+      setView(lng = -93.85, lat = 37.45, zoom = 4) %>%
+      addCircles(~longitude, ~latitude, radius=20000, layerId=~postalCode,
+                 stroke=FALSE, fillOpacity=0.4, fillColor=pal(colorData), label=~paste(name, full_address, sep=", ")) %>%
+      addLegend("bottomleft", pal=pal, values=head(colorData, top_five_count), title="Restaurant Chain (top 5 unordered)",
+                layerId="colorLegend")
+  })
+  
+  output$top_restaurant_list <- renderTable({
+    chain_name <- input$restaurant_chain
+    result <- restaurant_chain_list
+    if (chain_name != "All") {
+      result <- result %>% filter(name == chain_name)
+    }
+    result %>% head(5)
+  }, rownames = T, striped = T, hover = T, width = "100%", align = "l")
+
+  output$homepage <- renderUI({
+    HTML(markdown::markdownToHTML(file = "README.md"))
+  })
+  
+  output$addresses <- renderTable({
+    filtered_data <- restaurant_location_data
+    if (input$address_filter != "") {
+      filtered_data <- filtered_data %>% filter(
+        grepl(input$address_filter, full_address, ignore.case = T) | grepl(input$address_filter, name, ignore.case = T))
+    }
+    if (input$restaurant_chain != "All") {
+      filtered_data <- filtered_data %>% filter(name == input$restaurant_chain)
+    }
+    filtered_data %>% select(name, full_address) %>% head(100)
+  }, striped = T, width = "100%", align = "l")
+  
+  observe({
+    filtered_data <- restaurant_location_data
+    if (input$address_filter != "") {
+      filtered_data <- filtered_data %>% filter(
+        grepl(input$address_filter, full_address, ignore.case = T) | grepl(input$address_filter, name, ignore.case = T))
+    }
+    if (input$restaurant_chain != "All") {
+      filtered_data <- filtered_data %>% filter(name == input$restaurant_chain)
+    }
+    if (nrow(filtered_data) <= 10) {
+      leafletProxy("map", data = filtered_data) %>%
+        clearMarkers() %>%
+        addMarkers(~longitude, ~latitude, layerId=~postalCode, popup=~paste(paste0("<b>",name,"</b>"), full_address, sep="<br/>"))
+    } else {
+      leafletProxy("map") %>% clearMarkers()
+    }
+  })
+  observe({
     stateChoose <- input$stateChoice
     filtered_state <- countyObese %>%
       filter(State == stateChoose) %>%
@@ -20,15 +148,15 @@ shinyServer(function(input, output, session) {
                       label = "County Selection", 
                       choices = filtered_state,
                       selected = "")
-    })
-    
-    output$distribPie <- renderPlotly({
-      distribData <- countyObese %>%
-        select(State, County, name) %>%
-        filter(State == input$stateChoice) %>%
-        count(name) %>%
-        mutate(ttl = sum(n)) %>%
-        filter(n > 2)
+  })
+  
+  output$distribPie <- renderPlotly({
+    distribData <- countyObese %>%
+      select(State, County, name) %>%
+      filter(State == input$stateChoice) %>%
+      count(name) %>%
+      mutate(ttl = sum(n)) %>%
+      filter(n > 2)
     plot <- plot_ly(distribData, 
                     labels = ~name, 
                     values = ~n, 
@@ -39,47 +167,47 @@ shinyServer(function(input, output, session) {
                     textinfo = 'label+percent',
                     insidetextfont = list(color = '#FFFFFF'),
                     marker = list(colors = colors,
-                    line = list(color = '#FFFFFF', width = 1)),
+                                  line = list(color = '#FFFFFF', width = 1)),
                     showlegend = F) %>%
-            layout(title = 'Fast Food distribution in USA by State')
-            plot
-    })
-    
-    output$feedback <- renderText({
-      paste("You have selected <b>", input$countyChoice, 
-            "</b> county located in the state of <b>", 
-            input$stateChoice, "</b>.")
-    })
-    
-    output$data <- renderText({
-      used <- countyObese %>%
-        filter(State == input$stateChoice, County == input$countyChoice) %>%
-        select(pct_obese_14, pct_diabetes_14, poverty_rate) %>%
-        unique()
-      paste("This county has an obesity rate of <b>", used$pct_obese_14, 
-            "</b>, a diabetes rate of <b>", used$pct_diabetes_14, 
-            "</b> and a poverty rate of <b>", used$poverty_rate, "</b>.")
-    })
-    
-    output$racePie <- renderPlotly({
-      race <- countyObese %>%
-        filter(State == input$stateChoice, County == input$countyChoice) %>%
-        select(County, pct_white:pct_other) %>%
-        unique()
-      colnames(race) <- c("County", "Caucasian", "African American", "Hispanic", "Asian", "Other")
-      df <- melt(race, "County")
-      plot <- plot_ly(df, labels = ~variable, 
-                      values = ~value, 
-                      width = 570, 
-                      height = 550, 
-                      type = "pie",
-                      textposition = 'inside',
-                      textinfo = 'label+percent',
-                      insidetextfont = list(color = '#FFFFFF'),
-                      marker = list(colors = colors,
-                      line = list(color = '#FFFFFF', width = 1)),
-                      showlegend = F) %>%
-              layout(title = 'Race Distribution by County')
-              plot
-    })
+      layout(title = 'Fast Food distribution in USA by State')
+    plot
+  })
+  
+  output$feedback <- renderText({
+    paste("You have selected <b>", input$countyChoice, 
+          "</b> county located in the state of <b>", 
+          input$stateChoice, "</b>.")
+  })
+  
+  output$data <- renderText({
+    used <- countyObese %>%
+      filter(State == input$stateChoice, County == input$countyChoice) %>%
+      select(pct_obese_14, pct_diabetes_14, poverty_rate) %>%
+      unique()
+    paste("This county has an obesity rate of <b>", used$pct_obese_14, 
+          "</b>, a diabetes rate of <b>", used$pct_diabetes_14, 
+          "</b> and a poverty rate of <b>", used$poverty_rate, "</b>.")
+  })
+  
+  output$racePie <- renderPlotly({
+    race <- countyObese %>%
+      filter(State == input$stateChoice, County == input$countyChoice) %>%
+      select(County, pct_white:pct_other) %>%
+      unique()
+    colnames(race) <- c("County", "Caucasian", "African American", "Hispanic", "Asian", "Other")
+    df <- melt(race, "County")
+    plot <- plot_ly(df, labels = ~variable, 
+                    values = ~value, 
+                    width = 570, 
+                    height = 550, 
+                    type = "pie",
+                    textposition = 'inside',
+                    textinfo = 'label+percent',
+                    insidetextfont = list(color = '#FFFFFF'),
+                    marker = list(colors = colors,
+                                  line = list(color = '#FFFFFF', width = 1)),
+                    showlegend = F) %>%
+      layout(title = 'Race Distribution by County')
+    plot
+  })
 })
