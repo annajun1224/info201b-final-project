@@ -2,7 +2,7 @@
 
 ## What is Fast Food?
 
-Fast food refers to food that can be prepared and served quickly. Fast food is popular because the food is inexpensive, convenient, and tastes good. Close to a quarter of adults in American eat fast food **Every. Single. Day.** It's no surprise that fast food restaurants are in every city in America.
+Fast food refers to food that can be prepared and served quickly. Fast food is popular because the food is inexpensive, convenient, and tastes good. Close to a quarter of adults in America eat fast food **Every. Single. Day.** It's no surprise that fast food restaurants are in every city in America.
 
 ![ ](https://lmiller82691.files.wordpress.com/2015/02/36-fast-food-icons-jan-14-smaller-1024x316.png?w=1024)
 
@@ -12,7 +12,7 @@ Fast food is often made with cheaper ingredients such as **high fat meat**, **re
 
 Eating too much over a long period of time can lead to health problems such as __high blood pressure__, __heart disease__, and __obesity__. Since eating a lot of trans fats could cause certain heart health problems, the FDA (Federal Food and Drug Administration) has required that *trans fats (from partially hydrogenated oils) be removed from all foods served at restaurants* by 2018.
 
-## Is there any healthy fast food?
+## Are there any healthy fast foods?
 
 The FDA (Federal Food and Drug Administration) has proposed labeling requirements for all fast food restaurants (some states have already passed laws like this). 
 
@@ -29,6 +29,11 @@ Most fast food and restaurant chains also offer nutrition information online. Us
 
 Some chain restaurants may also have some of their menu options listed on food and diet trackers like MyFitnessPal, FatSecret, and Calorie King. However, use these sites with caution because not all information entered may be accurate.
 
+## What the Data Shows
+
+As can be seen from our data, Mc. Donald seems to be the most prominent in the United States generally making up **20~30%** of a States fast food chains.  Another interesting discovery was that  several previously thought popular fast food chains were not as popular as we think they were. For example, Subway was only found to be prominent in several larger cities such as **Chicago, Ney York city and Washington D.C.**. Despite several fast food chains being more prominent than others, theres seems to be no indication that any specific fast food chain causes more obesity or diabetes than others. There does however seem to be a relation between the amount of fast food restaurants and increases in obesity and diabetes.
+
+Another assumption that is often made is that fast food is cheap and therefore more accessible to poorer populations which would result in obesity as they eat more of these foods. However, our data does not seem to show this trend either.
 
 
 **Reference:**

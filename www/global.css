@@ -4,3 +4,7 @@ body {
     max-width: unset !important;
     width: unset !important;
 }
+
+.row {
+  display: flex;
+}
