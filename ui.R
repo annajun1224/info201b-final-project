@@ -2,7 +2,9 @@
 library(shiny)
 library(plotly)
 library(leaflet)
+library(DT)
 source("server.r")
+source("plot.r")
 
 introductionTabPanel <- tabPanel(
   "Home",
@@ -52,13 +54,16 @@ barChartPanel <- tabPanel(
               fluidRow(
                 splitLayout(cellWidths = c("50%", "50%"), 
                             plotlyOutput("distribPie", height = 550),
-                            plotlyOutput("racePie", height = 550)
+                            plotlyOutput("racePie", height = 550)),
+                            plotOutput("chngPlot")
+                            
                 )
               )
     )
     
   )
-)
+
+
 
 shinyUI(
   navbarPage(

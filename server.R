@@ -5,6 +5,7 @@ library(httr)
 library(jsonlite)
 library(leaflet)
 library(RColorBrewer)
+library(reshape2)
 
 ##########################Code for generating the joint data ##########################
 
@@ -182,11 +183,12 @@ shinyServer(function(input, output, session) {
   output$data <- renderText({
     used <- countyObese %>%
       filter(State == input$stateChoice, County == input$countyChoice) %>%
-      select(pct_obese_14, pct_diabetes_14, poverty_rate) %>%
+      select(count_change_pct, count_per_10k_pop_14, poverty_rate) %>%
       unique()
-    paste("This county has an obesity rate of <b>", used$pct_obese_14, 
-          "</b>, a diabetes rate of <b>", used$pct_diabetes_14, 
-          "</b> and a poverty rate of <b>", used$poverty_rate, "</b>.")
+    paste("Change in fast food chain count in 5 years: <b>", used$count_change_pct, 
+          "%</b><br>Restaurants per 10k people in 2014: <b>", 
+          used$count_per_10k_pop_14, 
+          "</b><br> Poverty Rate in 2014: <b>", used$poverty_rate, "%</b><br>")
   })
   
   output$racePie <- renderPlotly({
@@ -210,4 +212,20 @@ shinyServer(function(input, output, session) {
       layout(title = 'Race Distribution by County')
     plot
   })
+  output$chngPlot <- renderPlot({
+    filtersd <- countyObese %>%
+      filter(State == input$stateChoice, County == input$countyChoice) %>%
+      select(County, pct_obese_09, pct_obese_14, pct_diabetes_09, pct_diabetes_14) %>%
+      unique()
+    colnames(filtersd) <- c("County", "% Obese in 2009", "% Obese in 2014", "% Diabetic in 2009", "% Diabetic in 2014")
+    df <- melt(filtersd, "County")
+    p <- ggplot(data = df,
+                mapping = aes(x = variable, y = value, fill = variable)) +
+                geom_bar(stat = "identity") + 
+                labs(title = "Changes in Obesity and Diabetic Within a 5 Year Time Frame by County", 
+                     x = "", y = "percentage") +
+                theme(legend.position = "none", plot.title = element_text(hjust = 0.5, size = 20, face = "bold"), axis.text = element_text(size = 15, face = "bold"))
+    p
+  })
+
 })

@@ -22,4 +22,8 @@ countyObese_plot <- function(data){
 }
 
 
-
+filtersd <- countyObese %>%
+  filter(State == "AK", County == "Anchorage") %>%
+  select(County, pct_obese_09, pct_diabetes_09, pct_obese_14, pct_diabetes_14) %>%
+  unique()
+  
