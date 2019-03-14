@@ -1,7 +1,7 @@
 # ui.R
 library(shiny)
 library(plotly)
-
+source("plot.R")
 
 # County <- selectInput(
 #   "CountyChoice",
@@ -33,12 +33,9 @@ barChartPanel <- tabPanel(
       selectInput("countyChoice",
         label = "County Selection",
                   choices = "",
-                  selected = ""))
-        
-      ),
-
+                  selected = "")),
     mainPanel(plotOutput("plot"))
-  )
+  ))
 
   
 
