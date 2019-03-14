@@ -35,18 +35,17 @@ for (i in 2:6) {
   top_five_count <- top_five_count + joined_data %>% filter(name == restaurant_choices[i]) %>% nrow()
 }
 
-countyObese <- read.csv("data/joined_data.csv", stringsAsFactors = F)
-restaurantSelections <- countyObese %>%
+restaurantSelections <- joined_data %>%
   select(name) %>%
   unique()
 
-stateSelection <- countyObese %>%
+stateSelection <- joined_data %>%
   select(State, name) %>%
   select(State) %>%
   unique()
 
 
-restaurantByState <- countyObese %>%
+restaurantByState <- joined_data %>%
   select(State, name) %>%
   filter
 
@@ -151,7 +150,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     stateChoose <- input$stateChoice
-    filtered_state <- countyObese %>%
+    filtered_state <- joined_data %>%
       filter(State == stateChoose) %>%
       select(County)
     updateSelectInput(session, 
@@ -160,7 +159,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$distribPie <- renderPlotly({
-    distribData <- countyObese %>%
+    distribData <- joined_data %>%
       select(State, County, name) %>%
       filter(State == input$stateChoice) %>%
       count(name) %>%
@@ -189,7 +188,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$data <- renderText({
-    used <- countyObese %>%
+    used <- joined_data %>%
       filter(State == input$stateChoice, County == input$countyChoice) %>%
       select(pct_obese_14, pct_diabetes_14, poverty_rate, count_change_pct, count_per_10k_pop_14) %>%
       unique()
@@ -199,7 +198,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$racePie <- renderPlotly({
-    race <- countyObese %>%
+    race <- joined_data %>%
       filter(State == input$stateChoice, County == input$countyChoice) %>%
       select(County, pct_white:pct_other) %>%
       unique()
@@ -221,7 +220,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$chngPlot <- renderPlot({
-    filtersd <- countyObese %>%
+    filtersd <- joined_data %>%
       filter(State == input$stateChoice, County == input$countyChoice) %>%
       select(County, pct_obese_09, pct_obese_14, pct_diabetes_09, pct_diabetes_14) %>%
       unique()
@@ -237,7 +236,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$CountyInfo <- renderDataTable({
-    county_impacted <- countyObese %>%
+    county_impacted <- joined_data %>%
       group_by(County) %>%
       filter(pct_obese_14 == max(pct_obese_14)) %>%
       arrange(- pct_obese_14) %>%

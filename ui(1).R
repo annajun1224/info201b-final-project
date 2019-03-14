@@ -91,7 +91,7 @@ QATabPanel <- tabPanel(
 
 ContactInfo <- tabPanel(
   "Contact Information",
-  htmlOutput("Contact Information", container = div)
+  htmlOutput("ContactInformation", container = div)
 )
 
 shinyUI(
