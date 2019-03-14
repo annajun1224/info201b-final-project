@@ -35,17 +35,18 @@ for (i in 2:6) {
   top_five_count <- top_five_count + joined_data %>% filter(name == restaurant_choices[i]) %>% nrow()
 }
 
-restaurantSelections <- joined_data %>%
+countyObese <- read.csv("data/joined_data.csv", stringsAsFactors = F)
+restaurantSelections <- countyObese %>%
   select(name) %>%
   unique()
 
-stateSelection <- joined_data %>%
+stateSelection <- countyObese %>%
   select(State, name) %>%
   select(State) %>%
   unique()
 
 
-restaurantByState <- joined_data %>%
+restaurantByState <- countyObese %>%
   select(State, name) %>%
   filter
 
@@ -150,7 +151,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     stateChoose <- input$stateChoice
-    filtered_state <- joined_data %>%
+    filtered_state <- countyObese %>%
       filter(State == stateChoose) %>%
       select(County)
     updateSelectInput(session, 
@@ -159,7 +160,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$distribPie <- renderPlotly({
-    distribData <- joined_data %>%
+    distribData <- countyObese %>%
       select(State, County, name) %>%
       filter(State == input$stateChoice) %>%
       count(name) %>%
@@ -188,7 +189,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$data <- renderText({
-    used <- joined_data %>%
+    used <- countyObese %>%
       filter(State == input$stateChoice, County == input$countyChoice) %>%
       select(pct_obese_14, pct_diabetes_14, poverty_rate, count_change_pct, count_per_10k_pop_14) %>%
       unique()
@@ -198,7 +199,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$racePie <- renderPlotly({
-    race <- joined_data %>%
+    race <- countyObese %>%
       filter(State == input$stateChoice, County == input$countyChoice) %>%
       select(County, pct_white:pct_other) %>%
       unique()

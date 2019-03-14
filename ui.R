@@ -4,6 +4,8 @@ library(plotly)
 library(leaflet)
 library(DT)
 library(lubridate)
+source("server.R")
+
 introductionTabPanel <- tabPanel(
   "Home",
   htmlOutput("homepage", container = div)
